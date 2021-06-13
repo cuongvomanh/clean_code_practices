@@ -2,15 +2,22 @@ package html;
 
 import core.*;
 
-public class HtmlUtil implements HtmlUtilI {
-    public static String testableHtml(
-            PageData pageData,
-            boolean includeSuiteSetup
-    ) throws Exception {
+public class HtmlUtil implements SetupIncludeTeardownI {
+    private PageData pageData;
+    private boolean includeSuite;
+
+    @Override
+    public void init(PageData pageData, boolean includeSuite) throws Exception {
+        this.pageData = pageData;
+        this.includeSuite = includeSuite;
+    }
+
+    @Override
+    public String render() throws Exception {
         WikiPage wikiPage = pageData.getWikiPage();
         StringBuffer buffer = new StringBuffer();
         if (pageData.hasAttribute("Test")) {
-            if (includeSuiteSetup) {
+            if (includeSuite) {
                 WikiPage suiteSetup =
                         PageCrawlerImpl.getInheritedPage(
                                 SuiteResponder.SUITE_SETUP_NAME, wikiPage
@@ -48,7 +55,7 @@ public class HtmlUtil implements HtmlUtilI {
                         .append(tearDownPathName)
                         .append("\n");
             }
-            if (includeSuiteSetup) {
+            if (includeSuite) {
                 WikiPage suiteTeardown =
                         PageCrawlerImpl.getInheritedPage(
                                 SuiteResponder.SUITE_TEARDOWN_NAME,
@@ -67,4 +74,6 @@ public class HtmlUtil implements HtmlUtilI {
         pageData.setContent(buffer.toString());
         return pageData.getHtml();
     }
+
+
 }
