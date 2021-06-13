@@ -2,18 +2,19 @@ package html;
 
 import core.*;
 
+import java.util.Locale;
+
 public class SetupIncludeTeardown implements SetupIncludeTeardownI {
+    public static final String SET_UP = "SetUp";
+    public static final String SETUP = "setup";
+    public static final String TEAR_DOWN = "TearDown";
+    public static final String TEARDOWN = "teardown";
+    public static final String INCLUDE = "!include -";
+    public static final String TEST = "Test";
     private PageData pageData;
     private boolean includeSuite;
     private WikiPage wikiPage;
-    private WikiPage suiteSetup;
-    private WikiPage teardown;
-    private WikiPagePath pagePath;
-    private WikiPagePath tearDownPath;
-    private WikiPage setup;
-    private WikiPage suiteTeardown;
-    private WikiPagePath setupPath;
-    private final StringBuffer buffer = new StringBuffer();
+    private final StringBuffer newPageContent = new StringBuffer();
 
     @Override
     public void init(
@@ -28,17 +29,18 @@ public class SetupIncludeTeardown implements SetupIncludeTeardownI {
     @Override
     public String render() throws Exception {
         if (isTestPage(pageData)) {
-            includeSetupPages(includeSuite);
+            includeSetupPages();
         }
-        buffer.append(pageData.getContent());
+        newPageContent.append(pageData.getContent());
+        newPageContent.append("\n");
         if (isTestPage(pageData)) {
-            includeTeardownPages(includeSuite);
+            includeTeardownPages();
         }
-        pageData.setContent(buffer.toString());
+        pageData.setContent(newPageContent.toString());
         return pageData.getHtml();
     }
 
-    private void includeTeardownPages(boolean includeSuite) {
+    private void includeTeardownPages() {
         includeTeardownPage();
         if (includeSuite) {
             includeSuiteTeardownPage();
@@ -46,23 +48,27 @@ public class SetupIncludeTeardown implements SetupIncludeTeardownI {
     }
 
     private void includeTeardownPage() {
-        this.teardown =
-                PageCrawlerImpl.getInheritedPage("TearDown", wikiPage);
-        if (teardown != null) {
-            renderTeardownPage();
+        include(TEAR_DOWN, TEARDOWN);
+    }
+
+    private void include(String pageName, String type) {
+        WikiPage includeWikiPage =
+                PageCrawlerImpl.getInheritedPage(pageName, wikiPage);
+        if (includeWikiPage != null) {
+            String pathName = getPagePath(includeWikiPage);
+            render(type, pathName);
         }
     }
 
-    private void renderTeardownPage() {
-        this.tearDownPath =
-                wikiPage.getPageCrawler().getFullPath(teardown);
-        String tearDownPathName = PathParser.render(tearDownPath);
-        buffer.append("\n");
-        render("teardown", tearDownPathName);
+    private String getPagePath(WikiPage includeWikiPage) {
+        WikiPagePath tearDownPath =
+                wikiPage.getPageCrawler().getFullPath(includeWikiPage);
+        String pathName = PathParser.render(tearDownPath);
+        return pathName;
     }
 
     private void render(String type, String tearDownPathName) {
-        buffer.append("!include -")
+        newPageContent.append(INCLUDE)
                 .append(type)
                 .append(" .")
                 .append(tearDownPathName)
@@ -70,24 +76,10 @@ public class SetupIncludeTeardown implements SetupIncludeTeardownI {
     }
 
     private void includeSuiteTeardownPage() {
-        this.suiteTeardown =
-                PageCrawlerImpl.getInheritedPage(
-                        SuiteResponder.SUITE_TEARDOWN_NAME,
-                        wikiPage
-                );
-        if (suiteTeardown != null) {
-            renderSuiteTeardownPage();
-        }
+        include(SuiteResponder.SUITE_TEARDOWN_NAME, TEARDOWN);
     }
 
-    private void renderSuiteTeardownPage() {
-        this.pagePath =
-                suiteTeardown.getPageCrawler().getFullPath (suiteTeardown);
-        String pagePathName = PathParser.render(pagePath);
-        render("teardown", pagePathName);
-    }
-
-    private void includeSetupPages(boolean includeSuite) {
+    private void includeSetupPages() {
         if (includeSuite) {
             includeSuiteSetupPage();
         }
@@ -95,38 +87,14 @@ public class SetupIncludeTeardown implements SetupIncludeTeardownI {
     }
 
     private void includeSetupPage() {
-        this.setup =
-                PageCrawlerImpl.getInheritedPage("SetUp", wikiPage);
-        if (setup != null) {
-            renderSetupPage();
-        }
-    }
-
-    private void renderSetupPage() {
-        this.setupPath =
-                wikiPage.getPageCrawler().getFullPath(setup);
-        String setupPathName = PathParser.render(setupPath);
-        render("setup", setupPathName);
+        include(SET_UP, SETUP);
     }
 
     private void includeSuiteSetupPage() {
-        this.suiteSetup =
-                PageCrawlerImpl.getInheritedPage(
-                        SuiteResponder.SUITE_SETUP_NAME, wikiPage
-                );
-        if (suiteSetup != null) {
-            renderSuiteSetupPage();
-        }
-    }
-
-    private void renderSuiteSetupPage() {
-        this.pagePath =
-                suiteSetup.getPageCrawler().getFullPath(suiteSetup);
-        String pagePathName = PathParser.render(pagePath);
-        render("setup", pagePathName);
+        include(SuiteResponder.SUITE_SETUP_NAME, SETUP);
     }
 
     private boolean isTestPage(PageData pageData) {
-        return pageData.hasAttribute("Test");
+        return pageData.hasAttribute(TEST);
     }
 }

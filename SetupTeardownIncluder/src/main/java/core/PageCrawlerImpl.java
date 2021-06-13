@@ -2,8 +2,9 @@ package core;
 
 public class PageCrawlerImpl {
     public static WikiPage getInheritedPage(String suiteSetupName, WikiPage wikiPage) {
-        wikiPage.setName(suiteSetupName);
-        return wikiPage;
+        WikiPage inheritedWikiPage = new WikiPage();
+        inheritedWikiPage.setName(suiteSetupName);
+        return inheritedWikiPage;
     }
 
     public WikiPagePath getFullPath(WikiPage suiteSetup) {
