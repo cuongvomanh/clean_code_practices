@@ -2,7 +2,7 @@ package html;
 
 import core.*;
 
-public class HtmlUtil {
+public class HtmlUtil implements HtmlUtilI {
     public static String testableHtml(
             PageData pageData,
             boolean includeSuiteSetup
