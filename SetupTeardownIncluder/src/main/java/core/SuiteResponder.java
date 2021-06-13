@@ -1,4 +1,4 @@
-package html;
+package core;
 
 public class SuiteResponder {
     public static final String SUITE_SETUP_NAME = "SUITE_SETUP_NAME";

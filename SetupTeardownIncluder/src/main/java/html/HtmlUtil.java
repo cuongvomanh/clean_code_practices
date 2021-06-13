@@ -1,5 +1,7 @@
 package html;
 
+import core.*;
+
 public class HtmlUtil {
     public static String testableHtml(
             PageData pageData,

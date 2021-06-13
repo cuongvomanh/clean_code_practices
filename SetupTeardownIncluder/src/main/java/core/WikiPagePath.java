@@ -1,4 +1,4 @@
-package html;
+package core;
 
 public class WikiPagePath {
     private String path;

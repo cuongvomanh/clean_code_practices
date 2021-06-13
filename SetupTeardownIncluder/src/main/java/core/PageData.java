@@ -1,4 +1,4 @@
-package html;
+package core;
 
 public class PageData {
     private String content;
