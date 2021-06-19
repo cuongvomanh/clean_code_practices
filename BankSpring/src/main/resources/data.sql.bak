@@ -1,0 +1,17 @@
+-- create table accounts (
+--        id bigint not null,
+--         location varchar(255),
+--         name varchar(255),
+--         bank_id bigint,
+--         primary key (id)
+--     );
+create table banks (
+       id bigint not null,
+        name varchar(255),
+        primary key (id)
+    );
+--     alter table accounts
+--            add constraint FKb78evw9x9jyy66ld572kl8rgx
+--            foreign key (bank_id)
+--            references banks;
+insert into banks values (1, 'Techcombank');

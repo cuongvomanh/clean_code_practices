@@ -6,21 +6,43 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class SerializedPageResponderTest {
+    public static final String NAME_PAGE_ONE_NAME = "<name>PageOne</name>";
+    public static final String NAME_PAGE_TWO_NAME = "<name>PageTwo</name>";
+    public static final String NAME_CHILD_ONE_NAME = "<name>ChildOne</name>";
     private Crawler crawler = new Crawler();
     private String root = "";
     private MyRequest request = new MyRequest();
+    private SimpleResponse response;
+
+    private void addPages(String page1, String page2, String page3) {
+        addPage(page1);
+        addPage(page2);
+        addPage(page3);
+    }
+
+    private void addPages(String page1, String page2) {
+        addPage(page1);
+        addPage(page2);
+    }
+
+    private WikiPage addPage(String page1) {
+        WikiPage pageOne = crawler.addPage(root, PathParser.parse(page1));
+        return pageOne;
+    }
 
     @Test
     public void testGetPageHieratchyAsXml() {
-        crawler.addPage(root, PathParser.parse("PageOne"));
-        crawler.addPage(root, PathParser.parse("PageOne.ChileOne"));
-        crawler.addPage(root, PathParser.parse("PageTwo"));
+        addPages("PageOne", "PageOne.ChildOne", "PageTwo");
 
-        request.setResource("root");
-        SimpleResponse response = getSimpleResponse("pages");
-        String xml = response.getContent();
+        summitRequest("root", "pages");
 
-        assertXmlAndPages(response, xml);
+        assertXmlType();
+        assertPagesContain(NAME_PAGE_ONE_NAME, NAME_PAGE_TWO_NAME, NAME_CHILD_ONE_NAME);
+    }
+
+    private void summitRequest(String resource, String type) {
+        request.setResource(resource);
+        response = getSimpleResponse(type);
     }
 
     private SimpleResponse getSimpleResponse(String pages) {
@@ -29,11 +51,14 @@ public class SerializedPageResponderTest {
         return (SimpleResponse) responder.makeResponse(new FitNessContext(root), request);
     }
 
-    private void assertXmlAndPages(SimpleResponse response, String xml) {
+    private void assertPagesContain(String s1, String s2, String s3) {
+        assertPagesContain(s1);
+        assertPagesContain(s2);
+        assertPagesContain(s3);
+    }
+
+    private void assertXmlType() {
         assertEquals("text/xml", response.getContentType());
-        assertSubString("<name>PageOne</name>", xml);
-        assertSubString("<name>PageTwo</name>", xml);
-        assertSubString("<name>ChildOne</name>", xml);
     }
 
     private void assertSubString(String s, String xml) {
@@ -41,25 +66,28 @@ public class SerializedPageResponderTest {
 
     @Test
     public void testGetPageHieratchyAsXmlDoesntContainSymbolicLinks(){
-        WikiPage pageOne = crawler.addPage(root, PathParser.parse("PageOne"));
-        crawler.addPage(root, PathParser.parse("PageOne.ChildOne"));
-        crawler.addPage(root, PathParser.parse("PageTwo"));
+        WikiPage pageOne = addPage("PageOne");
+        addPages("PageOne.ChildOne", "PageTwo");
 
-        commitPageOne(pageOne);
+        createSymPageOnPageOne(pageOne, "SymPage");
+        summitRequest("root", "pages");
 
-        request.setResource("root");
-        SimpleResponse response = getSimpleResponse("pages");
-        String xml = response.getContent();
-
-        assertXmlAndPages(response, xml);
-        assertNotSubString("SymPage", xml);
+        assertXmlType();
+        assertPagesContain(NAME_PAGE_ONE_NAME, NAME_PAGE_TWO_NAME, NAME_CHILD_ONE_NAME);
+        assertPagesNotContain("SymPage");
     }
 
-    private void commitPageOne(WikiPage pageOne) {
+    private void assertPagesNotContain(String s1) {
+        assertNotSubString(s1, response.getContent());
+    }
+
+
+    private void createSymPageOnPageOne(WikiPage pageOne, String symPage) {
         PageData data = pageOne.getData();
+
         WikiPageProperties properties = data.getProperties();
         WikiPageProperty symLinks = properties.set(SymbolicPage.PROPERTY_NAME);
-        symLinks.set("SymPage", "PageTwo");
+        symLinks.set(symPage, "PageTwo");
         pageOne.commit(data);
     }
 
@@ -68,14 +96,20 @@ public class SerializedPageResponderTest {
 
     @Test
     public void testGetDataAsHtml(){
-        crawler.addPage(root, PathParser.parse("TestPageOne"), "test page");
+        makePageWithContent("TestPageOne", "test page");
 
-        request.setResource("TestPageOne");
-        SimpleResponse response = getSimpleResponse("data");
-        String xml = response.getContent();
+        summitRequest("TestPageOne", "data");
 
-        assertEquals("text/xml", response.getContentType());
-        assertSubString("test page", xml);
-        assertSubString("<Test", xml);
+        assertXmlType();
+        assertPagesContain("test page");
+        assertPagesContain("<Test");
+    }
+
+    private void assertPagesContain(String s) {
+        assertSubString(s, response.getContent());
+    }
+
+    private void makePageWithContent(String page, String content) {
+        crawler.addPage(root, PathParser.parse(page), content);
     }
 }
