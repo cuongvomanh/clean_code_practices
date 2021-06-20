@@ -1,4 +1,4 @@
-package Args;
+package args;
 
 public class ArgsException extends RuntimeException{
     private String errorMessage;

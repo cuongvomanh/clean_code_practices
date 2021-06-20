@@ -1,10 +1,10 @@
-import Args.Args;
+import argsrefactor.Args;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import Args.CanNotFindArgException;
-import Args.ParseIntExceptionWithIndex;
-import Args.ArgsException;
+import args.CanNotFindArgException;
+import args.ParseIntExceptionWithIndex;
+import args.ArgsException;
 
 public class ArgsTest {
 
@@ -89,7 +89,6 @@ public class ArgsTest {
     public void argsStringPatternTHashGetT_WillThrowException(){
         args = new String[]{"number"};
         arg = new Args("t#", args);
-        int t = arg.getInt('t');
     }
 
     @Test

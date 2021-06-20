@@ -1,4 +1,4 @@
-package Args;
+package args;
 
 public class ParseIntExceptionWithIndex extends ArgsException {
     public ParseIntExceptionWithIndex(int index){
