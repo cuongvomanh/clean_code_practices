@@ -129,5 +129,13 @@ public class ArgsTest {
         arg = new Args("b,i#,s*", args);
     }
 
+    @Test
+    public void argsXPatternTHashGetValueT_WillX(){
+        args = new String[]{"99"};
+        arg = new Args("x#", args);
+        int x = (int) arg.getValue('x');
+        assertEquals(99, x);
+    }
+
 
 }

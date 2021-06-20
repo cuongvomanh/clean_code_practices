@@ -25,7 +25,7 @@ public class Args {
 
     private void parseArg(int i) {
         String v =variables.get(i);
-        char vc = v.charAt(0);
+        char vc = getVc(v);
         Object value;
         if (v.endsWith("#")){
             value = parseInt(vc);
@@ -35,6 +35,10 @@ public class Args {
             value = parseBoolean(vc);
         }
         argStore.put(vc, value);
+    }
+
+    private char getVc(String v) {
+        return v.charAt(0);
     }
 
     private List<String> extractPattern(String pattern) {
@@ -108,4 +112,12 @@ public class Args {
         return arg;
     }
 
+    public Object getValue(char x) {
+        Object value = argStore.get(x);
+        if (value != null){
+            return value;
+        } else {
+            throw new CanNotFindArgException(x);
+        }
+    }
 }
