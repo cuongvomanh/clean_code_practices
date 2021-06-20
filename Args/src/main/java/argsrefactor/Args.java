@@ -41,24 +41,24 @@ public class Args {
     }
 
     public Boolean getBoolean(char b){
-        return (Boolean) getArg(b);
+        return BooleanArg.getValue(getArgFromStore(b));
     }
 
-    private Object getArg(char b) {
+    private BaseArg getArgFromStore(char b) {
         BaseArg arg = argStore.get(b);
         if (arg != null){
-            return arg.getValue();
+            return arg;
         } else {
             throw new CanNotFindArgException(b);
         }
     }
 
     public int getInt(char i){
-        return (int) getArg(i);
+        return IntArg.getValue(getArgFromStore(i));
     }
 
     public String getString(char s){
-        return (String) getArg(s);
+        return StringArg.getValue(getArgFromStore(s));
     }
 
     public Object getValue(char x) {
