@@ -1,9 +1,16 @@
 package args;
 
+import java.text.ParseException;
+
 public class Main {
     public static void main(String[] args) {
-            Args arg = new Args("l,p#,d*", args);
-            boolean logging = arg.getBoolean('l');
+        Args arg = null;
+        try {
+            arg = new Args("l,p#,d*", args);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        boolean logging = arg.getBoolean('l');
             executeApplication(logging, 0, "");
     }
 
