@@ -12,12 +12,12 @@ public class ArgsExceptionTest extends TestCase {
 
     public void testMissingStringMessage(){
         ArgsException e = new ArgsException(ErrorCode.MISSING_STRING, 'x', null);
-        assertEquals("Could not find strnig parameter for -x.", e.errorMessage());
+        assertEquals("Could not find string parameter for -x.", e.errorMessage());
     }
 
     public void testInvalidIntegerMessage(){
         ArgsException e = new ArgsException(ErrorCode.INVALID_INTEGER, 'x', "Forty two");
-        assertEquals("Argument -x expects an integer but was 'Forty two", 'x', "Forty two");
+        assertEquals("Argument -x expects an integer but was 'Forty two'", e.errorMessage());
     }
 
     public void testMissingIntegerMessage(){

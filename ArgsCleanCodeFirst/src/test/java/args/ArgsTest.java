@@ -2,8 +2,6 @@ package args;
 
 import junit.framework.TestCase;
 
-import java.text.ParseException;
-
 public class ArgsTest extends TestCase {
     public void testCreateWithNoSchemaOrArguments() throws Exception {
         Args args = new Args("", new String[]{""});
@@ -13,17 +11,15 @@ public class ArgsTest extends TestCase {
     public void testWithNoSchemaButWithOneArgument() throws Exception {
         try {
             new Args("", new String[]{"-x"});
-//            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
-            assertEquals('x', e.getErrorAgumentId());
+            assertEquals('x', e.getErrorArgumentId());
         }
     }
 
     public void testWithNoSchemaButWithMultipleArguments() throws Exception {
         try {
             new Args("", new String[]{"-x", "-y"});
-            fail();
         } catch(ArgsException e){
             assertEquals(ErrorCode.UNEXPECTED_ARGUMENT, e.getErrorCode());
             assertEquals('x', e.getErrorArgumentId());
@@ -33,7 +29,6 @@ public class ArgsTest extends TestCase {
     public void testNonLetterSchema() throws Exception{
         try {
             new Args("*", new String[]{});
-            fail("Args constructor should have thrown exception");
         } catch (ArgsException e){
             assertEquals(ErrorCode.INVALID_ARGUMENT_NAME, e.getErrorCode());
             assertEquals('*', e.getErrorArgumentId());
@@ -43,7 +38,6 @@ public class ArgsTest extends TestCase {
     public void testInvalidArgumentFormat() throws Exception{
         try {
             new Args("f~", new String[]{});
-            fail("Args constructor should have throws exception");
         } catch (ArgsException e){
             assertEquals(ErrorCode.INVALID_FORMAT, e.getErrorCode());
             assertEquals('f', e.getErrorArgumentId());
@@ -64,10 +58,9 @@ public class ArgsTest extends TestCase {
     public void testMissingStringArgument() throws Exception {
         try {
             new Args("x*", new String[]{"x"});
-            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.MISSING_STRING, e.getErrorCode());
-            assertEquals('x', e.getErrorAgumentId());
+            assertEquals('x', e.getErrorArgumentId());
         }
     }
 
@@ -88,7 +81,6 @@ public class ArgsTest extends TestCase {
     public void testInvalidInteger() throws Exception{
         try {
             new Args("x#", new String[]{"-x", "Forty two"});
-            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.INVALID_INTEGER, e.getErrorCode());
             assertEquals('x', e.getErrorArgumentId());
@@ -99,7 +91,6 @@ public class ArgsTest extends TestCase {
     public void testMissingInteger() throws Exception {
         try {
             new Args("x#", new String[]{"-x"});
-            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.MISSING_INTEGER, e.getErrorCode());
             assertEquals('x', e.getErrorArgumentId());
@@ -116,7 +107,6 @@ public class ArgsTest extends TestCase {
     public void testInvalidDouble() throws Exception {
         try {
             new Args("x##", new String[]{"-x", "Forty two"});
-            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.INVALID_DOUBLE, e.getErrorCode());
             assertEquals('x', e.getErrorArgumentId());
@@ -127,7 +117,6 @@ public class ArgsTest extends TestCase {
     public void testMissingDouble() throws Exception {
         try {
             new Args("x##", new String[]{"-x"});
-            fail();
         } catch (ArgsException e){
             assertEquals(ErrorCode.MISSING_DOUBLE, e.getErrorCode());
             assertEquals('x', e.getErrorArgumentId());

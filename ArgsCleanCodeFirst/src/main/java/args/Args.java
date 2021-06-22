@@ -1,8 +1,5 @@
 package args;
 
-import com.sun.glass.ui.Clipboard;
-
-import java.text.ParseException;
 import java.util.*;
 
 public class Args {
@@ -56,7 +53,7 @@ public class Args {
         } else if (isStringSchemaElement(elementTail)){
             parseStringSchemaElement(elementId);
         } else {
-            throw new ArgsException(ErrorCode.UNEXPECTED_ARGUMENT, elementId, elementTail);
+            throw new ArgsException(ErrorCode.INVALID_FORMAT, elementId, elementTail);
         }
     }
 
@@ -70,7 +67,7 @@ public class Args {
 
     private void validateSchemaElementId(char elementId) throws ArgsException {
         if (!Character.isLetter(elementId)){
-            throw new ArgsException(ErrorCode.INVALID_INTEGER, elementId, null);
+            throw new ArgsException(ErrorCode.INVALID_ARGUMENT_NAME, elementId, null);
         }
     }
 
@@ -148,7 +145,7 @@ public class Args {
     }
 
     public int cardinality() {
-        return numberOfArguments;
+        return argsFound.size();
     }
 
     public String usage() {
