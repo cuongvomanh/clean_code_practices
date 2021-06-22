@@ -7,7 +7,7 @@ public class Main {
         Args arg = null;
         try {
             arg = new Args("l,p#,d*", args);
-        } catch (ParseException e) {
+        } catch (ArgsException e) {
             e.printStackTrace();
         }
         boolean logging = arg.getBoolean('l');

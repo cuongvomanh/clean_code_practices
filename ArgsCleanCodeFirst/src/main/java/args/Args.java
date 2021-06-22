@@ -18,7 +18,7 @@ public class Args {
     private int currentArgument;
     private char errorAgument = '\0';
 
-    public Args(String schema, String[] args) throws ParseException {
+    public Args(String schema, String[] args) throws ArgsException {
         this.schema = schema;
         this.args = args;
         valid = parse();
@@ -28,7 +28,7 @@ public class Args {
         return valid;
     }
 
-    private boolean parse() throws ParseException {
+    private boolean parse() throws ArgsException {
         if (schema.length() == 0 && args.length == 0) {
             return true;
         }
@@ -37,7 +37,7 @@ public class Args {
         return unexpectedArguments.size() == 0;
     }
 
-    private boolean parseSchema() throws ParseException {
+    private boolean parseSchema() throws ArgsException {
         for (String element : schema.split(",")) {
             if (element.length() > 0){
                 String strimmedElement = element.trim();
@@ -47,7 +47,7 @@ public class Args {
         return true;
     }
 
-    private void parseSchemaElement(String element) throws ParseException {
+    private void parseSchemaElement(String element) throws ArgsException {
         char elementId = element.charAt(0);
         String elementTail = element.substring(1);
         validateSchemaElementId(elementId);
@@ -55,6 +55,8 @@ public class Args {
             parseBooleanSchemaElement(element);
         } else if (isStringSchemaElement(elementTail)){
             parseStringSchemaElement(elementId);
+        } else {
+            throw new ArgsException(ErrorCode.UNEXPECTED_ARGUMENT, elementId, elementTail);
         }
     }
 
@@ -66,9 +68,9 @@ public class Args {
         return elementTail.length() == 0;
     }
 
-    private void validateSchemaElementId(char elementId) throws ParseException {
+    private void validateSchemaElementId(char elementId) throws ArgsException {
         if (!Character.isLetter(elementId)){
-            throw new ParseException("Bad character:" + elementId + "in Args format: " + schema, 0);
+            throw new ArgsException(ErrorCode.INVALID_INTEGER, elementId, null);
         }
     }
 
@@ -128,7 +130,7 @@ public class Args {
             stringArgs.put(argChar, args[currentArgument]);
         } catch (ArrayIndexOutOfBoundsException e){
             valid = false;
-//            errorArgument = argChar;
+            errorAgument = argChar;
             errorCode = ErrorCode.MISSING_STRING;
         }
     }
@@ -181,5 +183,21 @@ public class Args {
 
     public boolean getBoolean(char arg) {
         return booleanArgs.get(arg);
+    }
+
+    public String getString(char arg) {
+        return stringArgs.get(arg);
+    }
+
+    public boolean has(char arg) {
+        return argsFound.contains(arg);
+    }
+
+    public double getDouble(char arg) {
+        return 0;
+    }
+
+    public int getInt(char arg) {
+        return 0;
     }
 }
