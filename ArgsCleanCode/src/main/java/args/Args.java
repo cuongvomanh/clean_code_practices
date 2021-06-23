@@ -92,4 +92,12 @@ public class Args {
     public double getDouble(char arg){
         return DoubleArgumentMarshaler.getValue(marshalers.get(arg));
     }
+
+    public int cardinality() {
+        return argsFound.size();
+    }
+
+    public boolean has(char x) {
+        return argsFound.contains(x);
+    }
 }

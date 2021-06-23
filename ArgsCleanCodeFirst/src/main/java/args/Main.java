@@ -7,11 +7,11 @@ public class Main {
         Args arg = null;
         try {
             arg = new Args("l,p#,d*", args);
+            boolean logging = arg.getBoolean('l');
+            executeApplication(logging, 0, "");
         } catch (ArgsException e) {
             e.printStackTrace();
         }
-        boolean logging = arg.getBoolean('l');
-            executeApplication(logging, 0, "");
     }
 
     private static void executeApplication(boolean logging, int port, String directory) {

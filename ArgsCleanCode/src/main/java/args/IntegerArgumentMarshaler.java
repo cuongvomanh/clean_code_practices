@@ -13,7 +13,7 @@ public class IntegerArgumentMarshaler implements ArgumentMarshaler {
             intString = currentArgument.next();
             intValue = Integer.parseInt(intString);
         } catch (NoSuchElementException e){
-            throw new ArgsException(ErrorCode.MISSING_STRING);
+            throw new ArgsException(ErrorCode.MISSING_INTEGER);
         } catch (NumberFormatException e){
             throw new ArgsException(ErrorCode.INVALID_INTEGER, intString);
         }
