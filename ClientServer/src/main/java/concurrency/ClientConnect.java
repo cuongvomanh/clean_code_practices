@@ -5,26 +5,29 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientConnect {
-    Socket serverSocket;
+    Socket socket;
     private int id;
 
-    public ClientConnect(ServerSocket serverSocket) throws IOException {
-        System.out.println("accepting client");
-        System.out.println("got client");
-        this.serverSocket = serverSocket.accept();
+    public ClientConnect(Socket socket) throws IOException {
+        this.socket = socket;
     }
 
     public InputStream getInputStream() throws IOException {
-        return serverSocket.getInputStream();
+        return socket.getInputStream();
     }
 
     public OutputStream getOutputStream() throws IOException {
-        return serverSocket.getOutputStream();
+        return socket.getOutputStream();
     }
 
     public void close() throws IOException {
-        serverSocket.close();
+        socket.close();
+    }
+
+    public void setSoTimeout(int millisecondsTimeout) throws SocketException {
+        socket.setSoTimeout(millisecondsTimeout);
     }
 }

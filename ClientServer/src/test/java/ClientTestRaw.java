@@ -53,17 +53,15 @@ public class ClientTestRaw {
     }
 
     private void connectSendReceive(int i) throws IOException {
-        ConnectionManager connectionManager = new ConnectionManager(PORT);
-        ClientConnect clientConnect = connectionManager.awaitClient();
-        ClientRequestProcessor clientRequestProcessor = new ClientRequestProcessor(clientConnect);
+        ClientConnect clientConnect = new ClientConnect(new Socket("localhost", PORT));
 //        System.out.printf("Client %2d: connection\n", i);
 //        Socket socket = new Socket("localhost", PORT);
         System.out.printf("Client %2d: sending message\n", i);
-        MessageUtils.sendMessage(clientRequestProcessor, "M" + Integer.toString(i));
+        MessageUtils.sendMessage(clientConnect, "M" + Integer.toString(i));
         System.out.printf("Client %2d: getting reply\n", i);
-        MessageUtils.getMessage(clientRequestProcessor);
+        MessageUtils.getMessage(clientConnect);
         System.out.printf("Client %2d: finished\n", i);
-        socket.close();
+        clientConnect.close();
     }
 
     @Test(timeout = 10000)
@@ -71,7 +69,6 @@ public class ClientTestRaw {
         Thread[] threads = new Thread[10];
         createAndStartAllThreads(threads);
         waitForAllThreadsToFinish(threads);
-
     }
 
     private void createAndStartAllThreads(Thread[] threads) {

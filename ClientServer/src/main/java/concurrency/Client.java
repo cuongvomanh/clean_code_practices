@@ -7,13 +7,11 @@ public class Client {
 
     public void connectSendReceive(int i){
         try {
-            Socket socket = new Socket("localhost", PORT);
-            ConnectionManager connectionManager = new ConnectionManager();
+            ConnectionManager connectionManager = new ConnectionManager(PORT);
             ClientConnect clientConnect = connectionManager.awaitClient();
-            ClientRequestProcessor clientRequestProcessor = new ClientRequestProcessor(clientConnect);
-            MessageUtils.sendMessage(clientRequestProcessor, Integer.toString(i));
-            MessageUtils.getMessage(clientRequestProcessor);
-            socket.close();
+            MessageUtils.sendMessage(clientConnect, Integer.toString(i));
+            MessageUtils.getMessage(clientConnect);
+            clientConnect.close();
         } catch (Exception e){
             e.printStackTrace();
         }

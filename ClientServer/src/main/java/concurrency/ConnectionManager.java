@@ -6,28 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionManager {
-    private List<ClientConnect> clientConnectPoll;
+    private final int port;
     private ServerSocket serverSocket;
 
     public ConnectionManager(int port) throws IOException {
+        this.port = port;
         serverSocket = new ServerSocket(port);
-        clientConnectPoll = new ArrayList<>();
     }
 
     public ClientConnect awaitClient() throws IOException {
+        System.out.println("accepting client");
         ClientConnect clientConnect = getClient();
+        System.out.println("got client");
         return clientConnect;
     }
 
     private ClientConnect getClient() throws IOException {
-        clientConnectPoll.add(new ClientConnect(serverSocket));
-        int clientIndex = getLastPollIndex();
-        System.out.printf("Client %2d: connection\n", clientIndex);
-        ClientConnect clientConnect = clientConnectPoll.get(clientIndex);
+        ClientConnect clientConnect = new ClientConnect(serverSocket.accept());
         return clientConnect;
     }
 
-    private int getLastPollIndex() {
-        return clientConnectPoll.size() - 1;
-    }
 }
