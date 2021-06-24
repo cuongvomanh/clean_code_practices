@@ -8,6 +8,7 @@ import java.net.SocketException;
 public class Server implements Runnable {
     ServerSocket serverSocket;
     volatile boolean keepProcessing = true;
+    private BusinessHandle businessHandle;
 
     public Server(int port, int millisecondsTimeout) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -22,7 +23,7 @@ public class Server implements Runnable {
                 System.out.println("accepting client");
                 Socket socket = serverSocket.accept();
                 System.out.println("got client");
-                process(socket);
+                businessHandle.process(socket);
             } catch (Exception e){
                 handle(e);
             }
@@ -35,30 +36,11 @@ public class Server implements Runnable {
         }
     }
 
-    private static void process(Socket socket) {
-        if (socket == null) return;
-        try {
-            System.out.println("Server: getting message");
-            String message = MessageUtils.getMessage(socket);
-            System.out.println(String.format("Server: got message %s", message));
-            Thread.sleep(1000);
-            System.out.println(String.format("Server: sending reply: %s", message));
-            MessageUtils.sendMessage(socket, "Processed: " + message);
-            System.out.println("Server: sent");
-            closeIgnoringException(socket);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+
+    public void stopProcessing() {
     }
 
-    private static void closeIgnoringException(Socket socket) {
-        if (socket != null){
-            try {
-                socket.close();
-            } catch (IOException ignore){
-            }
-        }
+    public void setBusinessHandle(BusinessHandle businessHandle) {
+        this.businessHandle = businessHandle;
     }
-
-
 }

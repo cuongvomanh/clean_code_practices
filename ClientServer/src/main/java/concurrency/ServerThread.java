@@ -4,10 +4,9 @@ import java.io.IOException;
 
 public class ServerThread {
     public static void main(String[] args){
-//        Client client = new Client();
-//        client.connectSendReceive(8009);
         try {
-            Server server = new Server(8009, 1000);
+            Server server = new Server(18009, 1000);
+            server.setBusinessHandle(new OneThreadBussinessHandle());
             Thread thread = new Thread(server);
             thread.start();
         } catch (IOException e) {
