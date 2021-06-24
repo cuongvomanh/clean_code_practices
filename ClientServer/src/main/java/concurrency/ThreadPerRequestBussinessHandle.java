@@ -1,10 +1,8 @@
 package concurrency;
 
-import java.net.Socket;
-
-public class ThreadPerRequestBussinessHandle extends BusinessHandle {
+public class ThreadPerRequestBussinessHandle extends ClientScheduler {
     @Override
-    public void process(Socket socket) {
+    public void schedule(ClientRequestProcessor socket) {
         if (socket == null) return;
         Runnable clientHandle = new Runnable() {
             @Override

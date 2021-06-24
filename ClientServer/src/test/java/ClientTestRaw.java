@@ -1,5 +1,4 @@
-import concurrency.MessageUtils;
-import concurrency.Server;
+import concurrency.*;
 import org.junit.After;
 import org.junit.Test;
 
@@ -54,12 +53,15 @@ public class ClientTestRaw {
     }
 
     private void connectSendReceive(int i) throws IOException {
-        System.out.printf("Client %2d: connection\n", i);
-        Socket socket = new Socket("localhost", PORT);
+        ConnectionManager connectionManager = new ConnectionManager(PORT);
+        ClientConnect clientConnect = connectionManager.awaitClient();
+        ClientRequestProcessor clientRequestProcessor = new ClientRequestProcessor(clientConnect);
+//        System.out.printf("Client %2d: connection\n", i);
+//        Socket socket = new Socket("localhost", PORT);
         System.out.printf("Client %2d: sending message\n", i);
-        MessageUtils.sendMessage(socket, "M" + Integer.toString(i));
+        MessageUtils.sendMessage(clientRequestProcessor, "M" + Integer.toString(i));
         System.out.printf("Client %2d: getting reply\n", i);
-        MessageUtils.getMessage(socket);
+        MessageUtils.getMessage(clientRequestProcessor);
         System.out.printf("Client %2d: finished\n", i);
         socket.close();
     }

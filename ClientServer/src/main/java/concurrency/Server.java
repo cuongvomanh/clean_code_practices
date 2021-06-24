@@ -8,7 +8,8 @@ import java.net.SocketException;
 public class Server implements Runnable {
     ServerSocket serverSocket;
     volatile boolean keepProcessing = true;
-    private BusinessHandle businessHandle;
+    private ClientScheduler clientScheduler;
+    private ConnectionManager connectionManager;
 
     public Server(int port, int millisecondsTimeout) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -20,10 +21,10 @@ public class Server implements Runnable {
         System.out.println("Server starting");
         while (keepProcessing){
             try {
-                System.out.println("accepting client");
-                Socket socket = serverSocket.accept();
-                System.out.println("got client");
-                businessHandle.process(socket);
+                connectionManager = new ConnectionManager(18009);
+                ClientConnect clientConnect = connectionManager.awaitClient();
+                ClientRequestProcessor requestProcessor = new ClientRequestProcessor(clientConnect);
+                clientScheduler.schedule(requestProcessor);
             } catch (Exception e){
                 handle(e);
             }
@@ -40,7 +41,7 @@ public class Server implements Runnable {
     public void stopProcessing() {
     }
 
-    public void setBusinessHandle(BusinessHandle businessHandle) {
-        this.businessHandle = businessHandle;
+    public void setBusinessHandle(ClientScheduler clientScheduler) {
+        this.clientScheduler = clientScheduler;
     }
 }
